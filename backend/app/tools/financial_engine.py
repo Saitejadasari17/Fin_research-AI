@@ -4,17 +4,17 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 
 class FinancialMetrics(BaseModel):
-    pe_ratio: float
-    forward_pe: float
-    pb_ratio: float
-    ps_ratio: float
-    ev_ebitda: float
-    operating_margin: float
-    net_margin: float
-    fcf_yield: float
-    debt_to_equity: float
-    current_ratio: float
-    revenue_cagr_3yr: float
+    pe_ratio: Optional[float] = None
+    forward_pe: Optional[float] = None
+    pb_ratio: Optional[float] = None
+    ps_ratio: Optional[float] = None
+    ev_ebitda: Optional[float] = None
+    operating_margin: Optional[float] = None
+    net_margin: Optional[float] = None
+    fcf_yield: Optional[float] = None
+    debt_to_equity: Optional[float] = None
+    current_ratio: Optional[float] = None
+    revenue_cagr_3yr: Optional[float] = None
 
 class DCFInput(BaseModel):
     current_fcf: float                # Million USD
@@ -54,50 +54,67 @@ class FinancialEngine:
 
     @staticmethod
     def calculate_ratios(data: Dict[str, float]) -> FinancialMetrics:
-        market_cap = data.get("market_cap", 1.0)
-        net_income = data.get("net_income", 1.0)
-        revenue = data.get("revenue", 1.0)
-        fcf = data.get("free_cash_flow", 1.0)
-        total_assets = data.get("total_assets", 1.0)
-        total_equity = data.get("total_equity", 1.0)
-        total_debt = data.get("total_debt", 0.0)
-        ebitda = data.get("ebitda", 1.0)
-        cash = data.get("cash", 0.0)
-        
-        ev = market_cap + total_debt - cash
+        market_cap = data.get("market_cap")
+        net_income = data.get("net_income")
+        revenue = data.get("revenue")
+        fcf = data.get("free_cash_flow")
+        total_equity = data.get("total_equity")
+        total_debt = data.get("total_debt")
+        ebitda = data.get("ebitda")
+        cash = data.get("cash")
+        operating_income = data.get("operating_income")
 
-        pe = market_cap / net_income if net_income > 0 else 0.0
-        ps = market_cap / revenue if revenue > 0 else 0.0
-        pb = market_cap / total_equity if total_equity > 0 else 0.0
-        ev_ebitda = ev / ebitda if ebitda > 0 else 0.0
-        op_margin = data.get("operating_income", 0.0) / revenue if revenue > 0 else 0.0
-        net_margin = net_income / revenue if revenue > 0 else 0.0
-        fcf_yield = fcf / market_cap if market_cap > 0 else 0.0
-        debt_to_equity = total_debt / total_equity if total_equity > 0 else 0.0
-        current_ratio = data.get("current_assets", 1.0) / data.get("current_liabilities", 1.0) if data.get("current_liabilities", 0) > 0 else 1.0
+        ev = (
+            market_cap + total_debt - cash
+            if all(value is not None for value in (market_cap, total_debt, cash))
+            else None
+        )
 
-        rev_hist = data.get("revenue_history_3yr", [revenue * 0.7, revenue * 0.85, revenue])
-        if len(rev_hist) >= 2 and rev_hist[0] > 0:
+        pe = market_cap / net_income if market_cap is not None and net_income and net_income > 0 else None
+        ps = market_cap / revenue if market_cap is not None and revenue and revenue > 0 else None
+        pb = market_cap / total_equity if market_cap is not None and total_equity and total_equity > 0 else None
+        ev_ebitda = ev / ebitda if ev is not None and ebitda and ebitda > 0 else None
+        op_margin = operating_income / revenue if operating_income is not None and revenue and revenue > 0 else None
+        net_margin = net_income / revenue if net_income is not None and revenue and revenue > 0 else None
+        fcf_yield = fcf / market_cap if fcf is not None and market_cap and market_cap > 0 else None
+        debt_to_equity = total_debt / total_equity if total_debt is not None and total_equity and total_equity > 0 else None
+        current_assets = data.get("current_assets")
+        current_liabilities = data.get("current_liabilities")
+        current_ratio = current_assets / current_liabilities if current_assets is not None and current_liabilities and current_liabilities > 0 else None
+
+        rev_hist = data.get("revenue_history_3yr")
+        if rev_hist and len(rev_hist) >= 2 and rev_hist[0] > 0:
             cagr = ((rev_hist[-1] / rev_hist[0]) ** (1 / (len(rev_hist) - 1))) - 1
         else:
-            cagr = 0.15
+            cagr = None
 
         return FinancialMetrics(
-            pe_ratio=round(pe, 2),
-            forward_pe=round(pe * 0.85, 2),
-            pb_ratio=round(pb, 2),
-            ps_ratio=round(ps, 2),
-            ev_ebitda=round(ev_ebitda, 2),
-            operating_margin=round(op_margin * 100, 2),
-            net_margin=round(net_margin * 100, 2),
-            fcf_yield=round(fcf_yield * 100, 2),
-            debt_to_equity=round(debt_to_equity, 2),
-            current_ratio=round(current_ratio, 2),
-            revenue_cagr_3yr=round(cagr * 100, 2)
+            pe_ratio=round(pe, 2) if pe is not None else None,
+            forward_pe=round(pe * 0.85, 2) if pe is not None else None,
+            pb_ratio=round(pb, 2) if pb is not None else None,
+            ps_ratio=round(ps, 2) if ps is not None else None,
+            ev_ebitda=round(ev_ebitda, 2) if ev_ebitda is not None else None,
+            operating_margin=round(op_margin * 100, 2) if op_margin is not None else None,
+            net_margin=round(net_margin * 100, 2) if net_margin is not None else None,
+            fcf_yield=round(fcf_yield * 100, 2) if fcf_yield is not None else None,
+            debt_to_equity=round(debt_to_equity, 2) if debt_to_equity is not None else None,
+            current_ratio=round(current_ratio, 2) if current_ratio is not None else None,
+            revenue_cagr_3yr=round(cagr * 100, 2) if cagr is not None else None
         )
 
     @staticmethod
     def calculate_dcf(inputs: DCFInput) -> DCFResult:
+        if inputs.current_fcf is None:
+            raise ValueError("Current FCF is required for DCF valuation.")
+        if inputs.shares_outstanding <= 0:
+            raise ValueError("Shares outstanding must be greater than zero.")
+        if inputs.current_stock_price <= 0:
+            raise ValueError("Current stock price must be greater than zero.")
+        if inputs.high_growth_years <= 0 or inputs.fade_years <= 0:
+            raise ValueError("DCF growth periods must be greater than zero.")
+        if inputs.wacc <= inputs.terminal_growth_rate:
+            raise ValueError("WACC must be greater than terminal growth.")
+
         cf = inputs.current_fcf
         pv_cf_sum = 0.0
         yearly_details = []
@@ -126,19 +143,13 @@ class FinancialEngine:
 
         # Terminal Value via Gordon Growth Model
         terminal_fcf = cf * (1 + inputs.terminal_growth_rate)
-        if inputs.wacc <= inputs.terminal_growth_rate:
-            wacc_adj = inputs.terminal_growth_rate + 0.01
-        else:
-            wacc_adj = inputs.wacc
-
-        terminal_value = terminal_fcf / (wacc_adj - inputs.terminal_growth_rate)
+        terminal_value = terminal_fcf / (inputs.wacc - inputs.terminal_growth_rate)
         pv_terminal_value = terminal_value / ((1 + inputs.wacc) ** (current_year - 1))
 
         enterprise_value = pv_cf_sum + pv_terminal_value
         equity_value = enterprise_value + inputs.cash_and_equivalents - inputs.total_debt
         
-        shares = max(inputs.shares_outstanding, 0.001)
-        fair_value_per_share = equity_value / shares
+        fair_value_per_share = equity_value / inputs.shares_outstanding
 
         diff_percent = ((fair_value_per_share - inputs.current_stock_price) / inputs.current_stock_price) * 100
 

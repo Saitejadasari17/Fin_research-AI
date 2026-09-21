@@ -6,6 +6,8 @@ export default function AgentTraceView({ report }) {
   const recColor = report.investment_recommendation === 'BUY' ? '#34d399' :
                    report.investment_recommendation === 'SELL' ? '#f87171' : '#fbbf24';
 
+  const currencySymbol = (report.currency === 'INR' || report.currency === '₹' || report.ticker?.endsWith('.NS')) ? '₹' : '$';
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '1.25rem' }}>
       {/* Main Executive Summary & Trace */}
@@ -118,11 +120,11 @@ export default function AgentTraceView({ report }) {
             </div>
             <div style={telemetryBoxStyle}>
               <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>DCF Intrinsic</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fbbf24' }}>${report.dcf_result.intrinsic_value_per_share}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fbbf24' }}>{currencySymbol}{report.dcf_result.intrinsic_value_per_share}</div>
             </div>
             <div style={telemetryBoxStyle}>
               <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>Market Price</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f9fafb' }}>${report.dcf_result.current_price}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f9fafb' }}>{currencySymbol}{report.dcf_result.current_price}</div>
             </div>
           </div>
         </div>
