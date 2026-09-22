@@ -7,6 +7,8 @@ export default function ValuationStudio({ report }) {
   const mc = report.monte_carlo_result;
   const sens = report.sensitivity_matrix;
 
+  const currencySymbol = (report.currency === 'INR' || report.currency === '₹' || report.ticker?.endsWith('.NS')) ? '₹' : '$';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* DCF Summary Banner */}
@@ -18,11 +20,11 @@ export default function ValuationStudio({ report }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
           <div style={statCardStyle}>
             <div style={labelStyle}>Intrinsic Fair Value</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#34d399' }}>${dcf.intrinsic_value_per_share}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#34d399' }}>{currencySymbol}{dcf.intrinsic_value_per_share}</div>
           </div>
           <div style={statCardStyle}>
             <div style={labelStyle}>Current Market Price</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f9fafb' }}>${dcf.current_price}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f9fafb' }}>{currencySymbol}{dcf.current_price}</div>
           </div>
           <div style={statCardStyle}>
             <div style={labelStyle}>Implied Upside / Downside</div>
@@ -37,15 +39,15 @@ export default function ValuationStudio({ report }) {
         </div>
 
         {/* Cash Flow Forecast Table */}
-        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#9ca3af' }}>10-Year Free Cash Flow Projections ($M)</h4>
+        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#9ca3af' }}>10-Year Free Cash Flow Projections ({currencySymbol}M)</h4>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
             <thead>
               <tr style={{ background: '#111827', color: '#9ca3af', textAlign: 'left' }}>
                 <th style={thStyle}>Year</th>
                 <th style={thStyle}>Phase</th>
-                <th style={thStyle}>Projected FCF ($M)</th>
-                <th style={thStyle}>Present Value ($M)</th>
+                <th style={thStyle}>Projected FCF ({currencySymbol}M)</th>
+                <th style={thStyle}>Present Value ({currencySymbol}M)</th>
               </tr>
             </thead>
             <tbody>
@@ -57,8 +59,8 @@ export default function ValuationStudio({ report }) {
                       {row.phase}
                     </span>
                   </td>
-                  <td style={tdStyle}>${row.fcf.toLocaleString()}</td>
-                  <td style={tdStyle}>${row.pv_fcf.toLocaleString()}</td>
+                  <td style={tdStyle}>{currencySymbol}{row.fcf.toLocaleString()}</td>
+                  <td style={tdStyle}>{currencySymbol}{row.pv_fcf.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -76,19 +78,19 @@ export default function ValuationStudio({ report }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={statCardStyle}>
               <div style={labelStyle}>Median Fair Value</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#60a5fa' }}>${mc.median_fair_value}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#60a5fa' }}>{currencySymbol}{mc.median_fair_value}</div>
             </div>
             <div style={statCardStyle}>
               <div style={labelStyle}>5th Percentile</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f87171' }}>${mc.percentile_5}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f87171' }}>{currencySymbol}{mc.percentile_5}</div>
             </div>
             <div style={statCardStyle}>
               <div style={labelStyle}>75th Percentile</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#34d399' }}>${mc.percentile_75}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#34d399' }}>{currencySymbol}{mc.percentile_75}</div>
             </div>
             <div style={statCardStyle}>
               <div style={labelStyle}>95th Percentile</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#a78bfa' }}>${mc.percentile_95}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#a78bfa' }}>{currencySymbol}{mc.percentile_95}</div>
             </div>
             <div style={statCardStyle}>
               <div style={labelStyle}>Prob. Undervalued</div>
@@ -107,7 +109,7 @@ export default function ValuationStudio({ report }) {
               return (
                 <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
                   <div
-                    title={`Price: $${binPrice} | Count: ${count}`}
+                    title={`Price: ${currencySymbol}${binPrice} | Count: ${count}`}
                     style={{
                       width: '100%',
                       height: `${heightPct}%`,
@@ -157,7 +159,7 @@ export default function ValuationStudio({ report }) {
                             fontWeight: 600
                           }}
                         >
-                          ${val}
+                          {currencySymbol}{val}
                         </td>
                       );
                     })}

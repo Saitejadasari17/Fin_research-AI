@@ -7,10 +7,10 @@ export default function BullBearView({ report }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {/* Judge Verdict Banner */}
+      {/* Thesis Verdict Banner */}
       <div style={{ background: '#1f2937', borderRadius: '12px', padding: '1.5rem', border: '1px solid #8b5cf6' }}>
         <div style={{ fontSize: '0.8rem', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem' }}>
-          ⚖️ Judge Agent Thesis Verdict
+          ⚖️ Thesis Verdict & Synthesis
         </div>
         <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.4rem', color: '#f9fafb' }}>
           {debate.thesis_survival_status}
@@ -28,7 +28,7 @@ export default function BullBearView({ report }) {
         {/* Bull Case */}
         <div style={{ background: '#1f2937', borderRadius: '12px', padding: '1.25rem', border: '1px solid #10b981' }}>
           <h4 style={{ margin: '0 0 1rem 0', color: '#34d399', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span>🐂</span> Bull Agent Arguments
+            <span>🐂</span> Bull Case Arguments
           </h4>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -54,7 +54,7 @@ export default function BullBearView({ report }) {
         {/* Bear Case */}
         <div style={{ background: '#1f2937', borderRadius: '12px', padding: '1.25rem', border: '1px solid #f43f5e' }}>
           <h4 style={{ margin: '0 0 1rem 0', color: '#f87171', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span>🐻</span> Bear Agent Arguments
+            <span>🐻</span> Bear Risk Arguments
           </h4>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

@@ -13,16 +13,23 @@ export default function App() {
   const [report, setReport] = useState(null);
   const [error, setError] = useState(null);
 
+  const rawApiUrl = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  let API_BASE_URL = rawApiUrl || 'http://127.0.0.1:8000';
+  if (API_BASE_URL && !API_BASE_URL.startsWith('http://') && !API_BASE_URL.startsWith('https://')) {
+    API_BASE_URL = `https://${API_BASE_URL}`;
+  }
+  API_BASE_URL = API_BASE_URL.replace(/\/+$/, '');
+
   const fetchAnalysis = (companyName) => {
     setLoading(true);
     setError(null);
-    fetch('http://127.0.0.1:8000/api/research/analyze', {
+    fetch(`${API_BASE_URL}/api/research/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company_name: companyName })
     })
       .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to execute dynamic investigation.`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Backend at ${API_BASE_URL} returned error.`);
         return res.json();
       })
       .then(data => {
@@ -31,7 +38,7 @@ export default function App() {
       })
       .catch(err => {
         console.error("API error:", err);
-        setError(err.message);
+        setError(`${err.message} (Calling: ${API_BASE_URL})`);
         setLoading(false);
       });
   };
@@ -70,10 +77,10 @@ export default function App() {
               📡
             </div>
             <h3 style={{ margin: '0 0 0.5rem 0', color: '#60a5fa', fontSize: '1.3rem' }}>
-              Autonomous Research Agent Investigating...
+              Running Financial Due Diligence & Market Analysis...
             </h3>
             <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.9rem' }}>
-              Retrieving SEC 10-K filings, executing zero-LLM DCF math, running 5,000 Monte Carlo simulations, verifying claim grounding, and launching Bull vs Bear debate.
+              Retrieving SEC EDGAR filings, calculating DCF valuation, running 5,000 Monte Carlo simulations, validating financial data, and building investment thesis.
             </p>
           </div>
         )}

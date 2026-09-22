@@ -6,6 +6,8 @@ export default function AgentTraceView({ report }) {
   const recColor = report.investment_recommendation === 'BUY' ? '#34d399' :
                    report.investment_recommendation === 'SELL' ? '#f87171' : '#fbbf24';
 
+  const currencySymbol = (report.currency === 'INR' || report.currency === '₹' || report.ticker?.endsWith('.NS')) ? '₹' : '$';
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '1.25rem' }}>
       {/* Main Executive Summary & Trace */}
@@ -25,7 +27,7 @@ export default function AgentTraceView({ report }) {
         }}>
           <div>
             <div style={{ fontSize: '0.85rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Autonomous Due-Diligence Recommendation
+              Investment Recommendation
             </div>
             <h2 style={{ margin: '0.2rem 0', fontSize: '1.8rem', color: '#f9fafb' }}>
               {report.company_name} ({report.ticker})
@@ -49,7 +51,7 @@ export default function AgentTraceView({ report }) {
               {report.investment_recommendation}
             </div>
             <div style={{ fontSize: '0.78rem', color: '#9ca3af', marginTop: '0.4rem' }}>
-              Grounding Confidence: <strong style={{ color: '#fff' }}>{report.confidence_score}%</strong>
+              Confidence Score: <strong style={{ color: '#fff' }}>{report.confidence_score}%</strong>
             </div>
           </div>
         </div>
@@ -58,7 +60,7 @@ export default function AgentTraceView({ report }) {
         <div style={{ background: '#1f2937', borderRadius: '12px', padding: '1.25rem', border: '1px solid #374151' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f9fafb', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>📡</span> Live Agent Investigation Trace
+              <span>📡</span> Execution Step Trace
             </h3>
             <span style={{ fontSize: '0.8rem', color: '#9ca3af', fontFamily: 'monospace' }}>
               {report.execution_trace.length} Steps Executed
@@ -102,10 +104,10 @@ export default function AgentTraceView({ report }) {
 
       {/* Sidebar Metrics & Observability */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {/* Observability Telemetry */}
+        {/* Execution Telemetry */}
         <div style={{ background: '#1f2937', borderRadius: '12px', padding: '1.25rem', border: '1px solid #374151' }}>
           <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', color: '#f9fafb' }}>
-            ⚡ Agent Observability
+            ⚡ Execution Metrics
           </h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
             <div style={telemetryBoxStyle}>
@@ -118,11 +120,11 @@ export default function AgentTraceView({ report }) {
             </div>
             <div style={telemetryBoxStyle}>
               <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>DCF Intrinsic</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fbbf24' }}>${report.dcf_result.intrinsic_value_per_share}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fbbf24' }}>{currencySymbol}{report.dcf_result.intrinsic_value_per_share}</div>
             </div>
             <div style={telemetryBoxStyle}>
               <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>Market Price</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f9fafb' }}>${report.dcf_result.current_price}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f9fafb' }}>{currencySymbol}{report.dcf_result.current_price}</div>
             </div>
           </div>
         </div>

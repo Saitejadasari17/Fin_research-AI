@@ -48,7 +48,7 @@ export default function Header({ onSearch, loading, activeTab, setActiveTab }) {
               FinResearch <span style={{ color: '#60a5fa' }}>AI</span>
             </h1>
             <p style={{ margin: 0, fontSize: '0.78rem', color: '#9ca3af' }}>
-              Autonomous Evidence-Grounded Investment Due-Diligence System
+              Investment Research & Financial Valuation Platform
             </p>
           </div>
         </div>
@@ -91,6 +91,8 @@ export default function Header({ onSearch, loading, activeTab, setActiveTab }) {
         <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
           <span style={{ fontSize: '0.78rem', color: '#6b7280', marginRight: '0.2rem' }}>Quick Test:</span>
           <button onClick={() => quickLaunch('NVIDIA')} style={quickBtnStyle}>NVIDIA</button>
+          <button onClick={() => quickLaunch('Micron')} style={quickBtnStyle}>Micron (MU)</button>
+          <button onClick={() => quickLaunch('AMD')} style={quickBtnStyle}>AMD</button>
           <button onClick={() => quickLaunch('Tesla')} style={quickBtnStyle}>Tesla</button>
         </div>
       </div>
