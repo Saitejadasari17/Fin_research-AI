@@ -1,0 +1,7 @@
+[project]
+name = "fin-research-ai"
+version = "0.1.0"
+description = "Autonomous Evidence-Grounded Investment Due-Diligence System"
+
+[tool.vercel]
+entrypoint = "backend.app.main:app"
